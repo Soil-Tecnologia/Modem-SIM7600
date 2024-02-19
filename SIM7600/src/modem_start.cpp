@@ -6,9 +6,20 @@
 */
 void start_modem();
 
+/*
+    Funcao criada para resetar o moodem
+*/
+void restart_modem();
+
+
 void start_modem()
 {
     Serial.println("[MODEM] Starting...");
-    modem.init();
-    modem.begin();
+    modem.restart();
+}
+
+void restart_modem()
+{
+    Serial.println("[MODEM] Restarting...");
+    modem.restart();
 }

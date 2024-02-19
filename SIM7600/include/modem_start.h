@@ -10,3 +10,4 @@ extern TinyGsmClient client;
 #define PWR_PIN         4
 
 void start_modem();
+void restart_modem();
