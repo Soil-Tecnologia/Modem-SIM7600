@@ -1,18 +1,14 @@
-#include <Arduino.h>
+#include "modem_start.h"
 
-// put function declarations here:
-int myFunction(int, int);
+TinyGsm modem(Serial1);
+TinyGsmClient client(modem);
 
-void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+void setup()
+{
+  start_modem();
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
-}
+void loop()
+{
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
 }
