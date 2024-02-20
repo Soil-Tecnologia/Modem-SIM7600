@@ -9,27 +9,25 @@ void init_gprs_connection();
 
 void init_gprs_connection()
 {
-    while (!modem.isNetworkConnected() || !modem.isGprsConnected())
+    Serial.println("Automatic");
+    modem.setNetworkMode(39);
+    while (!modem.isNetworkConnected())
     {
-        modem.setNetworkMode(2);
-
-        if (modem.isNetworkConnected())
+        while (!modem.gprsConnect("virtueyes.com.br", "virtu", "virtu"))
         {
-            while (!modem.gprsConnect("virtueyes.com.br"))
-            {
-                restart_modem();
-                vTaskDelay(pdMS_TO_TICKS(3000));
-            }
+            Serial.println("Falha em conectar no GPRS");
+            restart_modem();
+        }
+        Serial.println("APN connected");
 
-            Serial.println("APN connected");
-
-            Serial1.println("AT+CPSI?");
-            delay(500);
-            if (Serial1.available())
-            {
-                String at = Serial1.readString();
-                Serial1.println(at);
-            }
+        Serial1.println("AT+CPSI?");
+        delay(500);
+        if (Serial1.available())
+        {
+            String at = Serial1.readString();
+            Serial1.println(at);
         }
     }
+    Serial.println("Falha em conectar na Network");
+    vTaskDelay(pdMS_TO_TICKS(3000));
 }
