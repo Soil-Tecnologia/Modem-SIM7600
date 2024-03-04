@@ -1,4 +1,5 @@
 #include "modem_start.h"
+#include "serial_start.h"
 #include <Arduino.h>
 
 /*
@@ -14,7 +15,6 @@ void restart_modem();
 void start_modem()
 {
     Serial.println("[MODEM] Starting...");
-    Serial1.begin(115200, SERIAL_8N1, 27, 26);
     pinMode(PWR_PIN, OUTPUT);
     vTaskDelay(pdMS_TO_TICKS(1000));
     digitalWrite(PWR_PIN, HIGH);
