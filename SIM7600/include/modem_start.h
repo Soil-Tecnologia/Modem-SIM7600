@@ -3,6 +3,7 @@
 
 #include "TinyGSM.h"
 #include "TinyGsmClient.h"
+#include <Arduino.h>
 
 extern TinyGsm modem;
 extern TinyGsmClient client;
@@ -11,3 +12,5 @@ extern TinyGsmClient client;
 
 void start_modem();
 void restart_modem();
+String get_modem_info();
+String get_public_rssi();

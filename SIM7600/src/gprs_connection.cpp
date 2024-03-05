@@ -7,10 +7,12 @@
 */
 void init_gprs_connection();
 
+uint8_t cont = 0;
+
 void init_gprs_connection()
 {
     bool is_connected = modem.isNetworkConnected();
-    Serial.println("Automatic");
+
     modem.setNetworkMode(2);
     if (is_connected)
     {
@@ -23,22 +25,17 @@ void init_gprs_connection()
         else
         {
             Serial.println("APN connected");
-
-            Serial1.println("AT+CPSI?");
-            delay(500);
-            if (Serial1.available())
-            {
-                String at = Serial1.readString();
-                Serial1.println(at);
-            }
         }
     }
     else
     {
         Serial.println("Falha em conectar na Network");
-        vTaskDelay(pdMS_TO_TICKS(3000));
+        cont++;
         restart_modem();
         init_gprs_connection();
+
+        if (cont == 5)
+            esp_restart();
     }
 
     Serial.println("Conectado");

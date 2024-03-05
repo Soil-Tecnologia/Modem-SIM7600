@@ -1,7 +1,10 @@
 #include <Arduino.h>
 #include "mqtt_config.h"
+#include "serial_start.h"
+#include "mqtt_file.h"
+#include "flash_file.h"
 
-void task_communication(void *pvParameters)
+void task_comm_with_board_while_starting(void *pvParameters)
 {
     String idp_06;
     while (1)
@@ -40,6 +43,43 @@ void task_communication(void *pvParameters)
     }
 }
 
+void task_serial_board(void *pvParameters)
+{
+    while (1)
+    {
+        if (Serial2.available())
+        {
+            String read_board = Serial2.readString();
+            String data_received_board = read_board;
+            String idp_str = data_received_board.substring(1, 3);
+            int idp_int = IDP_INVALID; // Valor padrão
+
+            int hashtag_position = read_board.indexOf('#');
+
+            if (hashtag_position != -1)
+            {
+                try
+                {
+                    idp_int = idp_str.toInt();
+                }
+                catch (const std::exception &e)
+                {
+                    Serial.println("[ERROR] Empty IDP");
+                }
+            }
+
+            if (idp_int == IDP_6)
+            {
+                register_new_topic(read_board);
+            }
+            else
+            {
+                Serial.println("[MODEM] Board sent idp other than six");
+            }
+        }
+        sleep(5);
+    }
+}
 
 void handle_cloud_to_board_idp(char *message)
 {
@@ -62,7 +102,7 @@ void handle_cloud_to_board_idp(char *message)
         {
             Serial.println("[MODEM] Empty IDP");
         }
-        String new_id = readFile(SPIFFS, "/pivo_ID.txt");
+        String new_id = flash_file_read("/pivo_id.txt");
         String cloud_empty_string = "#98-Empty_idp_received_cloud-" + new_id + "$";
         String ack_received = "#20-" + new_id + "-" + "ack_received$";
         switch (number)
@@ -132,7 +172,7 @@ void handle_cloud_to_board_idp(char *message)
             mqtt.publish(MQTT_TOPIC_NETWORK, cloud_empty_string.c_str(), cloud_empty_string.length());
             break;
         default:
-            String new_id = readFile(SPIFFS, "/pivo_ID.txt");
+            String new_id = flash_file_read("/pivo_id.txt");
             String cloud_invalid_string = "#99-Invalid_idp-" + new_id + "$";
             Serial.println(cloud_invalid_string);
             mqtt.publish(MQTT_TOPIC_NETWORK, cloud_invalid_string.c_str(), cloud_invalid_string.length());

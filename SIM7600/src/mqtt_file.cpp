@@ -5,6 +5,7 @@
 #include "flash_file.h"
 #include "certs.h"
 #include "certificates.h"
+#include "comm.h"
 #include <Arduino.h>
 #include <SSLClient.h>
 #include <PubSubClient.h>
@@ -39,12 +40,12 @@ void mqtt_message_callback(char *topic, byte *payload, unsigned int len)
   strcpy(message, message_received.c_str());
 
   // Call function
-  handle_cloud_to_board_idp(message);
+  // handle_cloud_to_board_idp(message);
 }
 
 void register_new_topic(String data_received_board)
 {
-  String old_id = flash_file_read("/pivo_ID.txt");
+  String old_id = flash_file_read("/pivo_id.txt");
   mqtt.unsubscribe(old_id.c_str());
 
   char *hashtag_position = strchr(data_received_board.c_str(), '#');
@@ -58,18 +59,18 @@ void register_new_topic(String data_received_board)
 
     if (id.length() < MINIMAL_SIZE_GPRS_ID)
     {
-      id = flash_file_read("/pivo_ID.txt").c_str();
+      id = flash_file_read("/pivo_id.txt").c_str();
       Serial.print("[MODEM] Invalid ID, id registered: ");
       Serial.println(id.c_str());
-      String invalid_idp = "#99-Invalid_idp-" + gprs_id + "$";
+      String invalid_idp = "#99-Invalid_idp-" + old_id + "$";
       mqtt.publish(MQTT_TOPIC_NETWORK, invalid_idp.c_str());
     }
     else
     {
-      flash_file_write("/pivo_ID.txt", id.c_str());
+      flash_file_write("/pivo_id.txt", id.c_str());
       vTaskDelay(pdMS_TO_TICKS(100));
     }
-    String new_id = flash_file_read("/pivo_ID.txt");
+    String new_id = flash_file_read("/pivo_id.txt");
     String subs = id.c_str();
     char subc[id.length()];
     strcpy(subc, subs.c_str());

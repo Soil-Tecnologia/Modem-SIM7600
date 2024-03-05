@@ -2,6 +2,7 @@
 #include "gprs_connection.h"
 #include "serial_start.h"
 #include "flash_file.h"
+#include "comm.h"
 
 TinyGsm modem(Serial1);
 TinyGsmClient client(modem);
@@ -9,21 +10,26 @@ TinyGsmClient client(modem);
 void setup()
 {
   Serial.begin(SERIAL_BAUD_RATE, SERIAL_8N1, SERIAL_TX, SERIAL_RX);
-  Serial2.begin(SERIAL_BAUD_RATE, SERIAL_8N1, SERIAL1_TX, SERIAL1_RX);
+  // Serial2.begin(SERIAL_BAUD_RATE, SERIAL_8N1, SERIAL1_TX, SERIAL1_RX);
   Serial1.begin(SERIAL2_BAUD_RATE, SERIAL_8N1, SERIAL2_TX, SERIAL2_RX);
-
+  Serial.println("[MODEM] INICIALIZANDO AS SERIAIS");
   vTaskDelay(pdMS_TO_TICKS(500));
   flash_file_init();
 
+  xTaskCreatePinnedToCore(task_comm_with_board_while_starting, "TaskComm", 10000, NULL, 1, NULL, 1);
+  xTaskCreatePinnedToCore(task_serial_board, "taskBoard", 10000, NULL, 1, NULL, 1);
   start_modem();
 
   init_gprs_connection();
+
+  get_modem_info();
 }
 
 void loop()
 {
-  if(modem.isGprsConnected()){
-    vTaskDelay(pdMS_TO_TICKS(5000));
-    Serial.println("MODEM CONECTADO NA INTERNET");
+  if (modem.isGprsConnected())
+  {
+    vTaskDelay(pdMS_TO_TICKS(10000));
+    get_modem_info();
   }
 }
