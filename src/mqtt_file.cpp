@@ -57,11 +57,12 @@ bool mqtt_is_connect()
   return mqtt.connected();
 }
 
-void mqtt_connect()
+void task_mqtt_connection(void *arg)
 {
-  if (!mqtt.connected())
+  while (true)
   {
-    while (!mqtt.connected())
+    Serial.println("CCCCCCCCCCCCCCCCCCC");
+    if (!mqtt.connected())
     {
       if (mqtt_is_connect())
       {
@@ -80,8 +81,6 @@ void mqtt_connect()
         // init_gprs_connection();
         String info = get_modem_info();
         Serial.println(info);
-        vTaskDelay(pdMS_TO_TICKS(2000));
-        mqtt_connect();
         vTaskDelay(pdMS_TO_TICKS(1000));
 
         if (aws_connect_attempts >= MAX_SSL_CONNECT)
@@ -97,9 +96,9 @@ void mqtt_connect()
         vTaskDelay(pdMS_TO_TICKS(100));
       }
     }
+    mqtt.loop();
+    publish_board_to_cloud_idp();
   }
-  mqtt.loop();
-  publish_board_to_cloud_idp();
 }
 
 void mqtt_message_callback(char *topic, byte *payload, unsigned int len)

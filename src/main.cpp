@@ -14,21 +14,15 @@ void setup()
   vTaskDelay(pdMS_TO_TICKS(500));
   flash_file_init();
 
-  xTaskCreatePinnedToCore(task_comm_with_board_while_starting, "TaskComm", 10000, NULL, 1, NULL, 1);
-  xTaskCreatePinnedToCore(task_serial_board, "taskBoard", 10000, NULL, 1, NULL, 1);
   start_modem();
 
-  init_gprs_connection();
+  xTaskCreate(task_comm_with_board_while_starting, "TaskComm", 10000, NULL, 1, NULL);
+  xTaskCreate(task_serial_board, "taskBoard", 10000, NULL, 1, NULL);
+  xTaskCreate(task_gprs_connection, "task_gprs", 10000, NULL, configMAX_PRIORITIES, NULL);
+  xTaskCreate(task_mqtt_connection, "task_mqtt", 10000, NULL, configMAX_PRIORITIES - 5, NULL);
 }
 
 void loop()
 {
-  if (modem.isGprsConnected())
-  {
-    mqtt_connect();
-  }
-  else
-  {
-    init_gprs_connection();
-  }
+  vTaskDelay(pdMS_TO_TICKS(500));
 }

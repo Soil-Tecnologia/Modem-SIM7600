@@ -2,4 +2,4 @@
 #define PASS            "virtu"
 #define USER            "virtu"
 
-void init_gprs_connection();
+void task_gprs_connection(void *arg);

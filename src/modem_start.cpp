@@ -15,15 +15,12 @@ void restart_modem();
 
 void start_modem()
 {
-    Serial.println("[MODEM] Starting...");
+    Serial.println("[MODEM] Initializing");
     pinMode(PWR_PIN, OUTPUT);
-    vTaskDelay(pdMS_TO_TICKS(1000));
-    digitalWrite(PWR_PIN, LOW);
-    vTaskDelay(pdMS_TO_TICKS(500));
+    delay(500);
     digitalWrite(PWR_PIN, HIGH);
     modem.init();
-    modem.begin();
-    vTaskDelay(pdMS_TO_TICKS(20000));
+    vTaskDelay(pdMS_TO_TICKS(2000));
 }
 
 void restart_modem()
