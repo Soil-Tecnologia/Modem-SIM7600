@@ -3,9 +3,7 @@
 #include "serial_start.h"
 #include "flash_file.h"
 #include "comm.h"
-
-TinyGsm modem(Serial1);
-TinyGsmClient client(modem);
+#include "mqtt_file.h"
 
 void setup()
 {
@@ -21,15 +19,16 @@ void setup()
   start_modem();
 
   init_gprs_connection();
-
-  get_modem_info();
 }
 
 void loop()
 {
   if (modem.isGprsConnected())
   {
-    vTaskDelay(pdMS_TO_TICKS(10000));
-    get_modem_info();
+    mqtt_connect();
+  }
+  else
+  {
+    init_gprs_connection();
   }
 }

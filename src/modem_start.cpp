@@ -18,10 +18,12 @@ void start_modem()
     Serial.println("[MODEM] Starting...");
     pinMode(PWR_PIN, OUTPUT);
     vTaskDelay(pdMS_TO_TICKS(1000));
+    digitalWrite(PWR_PIN, LOW);
+    vTaskDelay(pdMS_TO_TICKS(500));
     digitalWrite(PWR_PIN, HIGH);
     modem.init();
     modem.begin();
-    vTaskDelay(pdMS_TO_TICKS(10000));
+    vTaskDelay(pdMS_TO_TICKS(20000));
 }
 
 void restart_modem()
@@ -32,7 +34,7 @@ void restart_modem()
     modem.restart();
     vTaskDelay(pdMS_TO_TICKS(500));
     digitalWrite(PWR_PIN, HIGH);
-    vTaskDelay(pdMS_TO_TICKS(7000));
+    vTaskDelay(pdMS_TO_TICKS(10000));
 }
 
 String parsing_first_parameter_at(String input)
@@ -126,7 +128,7 @@ String get_public_rssi()
 
     String pivo_id = flash_file_read("/pivo_id.txt");
 
-    String info_rssi = "#08-" + pivo_id + "-" + rssi_negative + "$"
+    String info_rssi = "#08-" + pivo_id + "-" + rssi_negative + "$";
 
     return info_rssi;
 }
