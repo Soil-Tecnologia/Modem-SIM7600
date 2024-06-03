@@ -1,6 +1,7 @@
 #include "modem_start.h"
 #include "serial_start.h"
 #include "flash_file.h"
+#include "gprs_connection.h"
 #include <Arduino.h>
 
 /*
@@ -17,21 +18,23 @@ void start_modem()
 {
     Serial.println("[MODEM] Initializing");
     pinMode(PWR_PIN, OUTPUT);
-    delay(500);
+    vTaskDelay(pdMS_TO_TICKS(500));
     digitalWrite(PWR_PIN, HIGH);
-    modem.init();
-    vTaskDelay(pdMS_TO_TICKS(2000));
+    modem.begin();
+    vTaskDelay(pdMS_TO_TICKS(3000));
 }
 
 void restart_modem()
 {
     Serial.println("[MODEM] Restarting...");
+    Serial1.println("AT+CFUN=1,1");
+    vTaskDelay(pdMS_TO_TICKS(3000));
     digitalWrite(PWR_PIN, LOW);
-    vTaskDelay(pdMS_TO_TICKS(500));
+    vTaskDelay(pdMS_TO_TICKS(3000));
     modem.restart();
-    vTaskDelay(pdMS_TO_TICKS(500));
+    vTaskDelay(pdMS_TO_TICKS(3000));
     digitalWrite(PWR_PIN, HIGH);
-    vTaskDelay(pdMS_TO_TICKS(10000));
+    vTaskDelay(pdMS_TO_TICKS(1000));
 }
 
 String parsing_first_parameter_at(String input)

@@ -8,7 +8,7 @@ void flash_file_write(const char *path, const char *message);
 bool flash_file_init(void)
 {
   bool init = true;
-  String gprs_id;
+  String gprs_id = MQTT_TOPIC_DEFAULT;
 
   if (SPIFFS.begin(init))
   {

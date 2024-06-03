@@ -6,6 +6,7 @@
 #include "certs.h"
 #include "certificates.h"
 #include "comm.h"
+#include "tasks.h"
 #include <Arduino.h>
 #include <SSLClient.h>
 #include <PubSubClient.h>
@@ -21,6 +22,12 @@ SSLClient clientSSL(client, TAs, (size_t)TAs_NUM, 36);
 PubSubClient mqtt(MODEM_MQTT_BROKER, MQTT_PORT, mqtt_message_callback, clientSSL);
 
 uint8_t aws_connect_attempts = 0;
+
+void set_aws_certificates()
+{
+  Serial.println("[MQTT] Sending certificates");
+  clientSSL.setMutualAuthParams(mTLS);
+}
 
 bool mqtt_is_connect()
 {
@@ -59,15 +66,19 @@ bool mqtt_is_connect()
 
 void task_mqtt_connection(void *arg)
 {
+  TaskHandle_t nextTask;
+  xQueueReceive(taskQueue, &nextTask, portMAX_DELAY);
+  vTaskDelay(pdMS_TO_TICKS(3000));
   while (true)
   {
-    Serial.println("CCCCCCCCCCCCCCCCCCC");
     if (!mqtt.connected())
     {
       if (mqtt_is_connect())
       {
         Serial.println("[MQTT] CONNECTED");
-        return;
+        vTaskResume(task3Handle);
+        vTaskDelete(task1Handle);
+        vTaskDelay(pdMS_TO_TICKS(1000));
       }
       else
       {
@@ -76,7 +87,6 @@ void task_mqtt_connection(void *arg)
         Serial.print("[MQTT] Connection attempts: ");
         Serial.println(aws_connect_attempts);
         Serial.println();
-
         // restart_modem();
         // init_gprs_connection();
         String info = get_modem_info();
@@ -98,6 +108,7 @@ void task_mqtt_connection(void *arg)
     }
     mqtt.loop();
     publish_board_to_cloud_idp();
+    vTaskDelay(pdMS_TO_TICKS(2000));
   }
 }
 

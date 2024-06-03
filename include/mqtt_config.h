@@ -6,7 +6,7 @@
 
 #define MQTT_PORT                   8883
 #define MODEM_MQTT_BROKER           "a19mijesri84u2-ats.iot.us-east-1.amazonaws.com"
-#define MQTT_TOPIC_DEFAULT          "PIVO_NAO_CADASTRADO"
+#define MQTT_TOPIC_DEFAULT          "PIVO_DUDU"
 #define MQTT_TOPIC_INIT             "cloud2"
 #define MQTT_TOPIC_PAYLOAD          "cloudv2"
 #define MQTT_TOPIC_SCHEDULING       "cloudv2-scheduling"

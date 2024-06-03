@@ -40,45 +40,9 @@ void task_comm_with_board_while_starting(void *pvParameters)
                 vTaskDelete(NULL);
             }
         }
+        vTaskDelay(pdMS_TO_TICKS(500));
     }
-}
-
-void task_serial_board(void *pvParameters)
-{
-    while (1)
-    {
-        if (Serial2.available())
-        {
-            String read_board = Serial2.readString();
-            String data_received_board = read_board;
-            String idp_str = data_received_board.substring(1, 3);
-            int idp_int = IDP_INVALID; // Valor padrão
-
-            int hashtag_position = read_board.indexOf('#');
-
-            if (hashtag_position != -1)
-            {
-                try
-                {
-                    idp_int = idp_str.toInt();
-                }
-                catch (const std::exception &e)
-                {
-                    Serial.println("[ERROR] Empty IDP");
-                }
-            }
-
-            if (idp_int == IDP_6)
-            {
-                register_new_topic(read_board);
-            }
-            else
-            {
-                Serial.println("[MODEM] Board sent idp other than six");
-            }
-        }
-        sleep(5);
-    }
+    vTaskDelay(pdMS_TO_TICKS(500));
 }
 
 void handle_cloud_to_board_idp(char *message)
@@ -274,7 +238,7 @@ void publish_board_to_cloud_idp()
                     break;
                 }
             }
-            delay(10);
+            
         }
     }
 }
