@@ -6,8 +6,9 @@
 #include "mqtt_file.h"
 #include "esp_task_wdt.h"
 
-TaskHandle_t task_new_topic_register = NULL;
-TaskHandle_t task3Handle = NULL;
+TaskHandle_t new_topic_register_task = NULL;
+TaskHandle_t gprs_connection_task = NULL;
+TaskHandle_t communication_board_task = NULL;
 
 
 void setup()
@@ -28,8 +29,10 @@ void setup()
 
   set_aws_certificates();
 
-  xTaskCreate(task_comm_with_board_while_starting, "TaskComm", 2048, NULL, tskIDLE_PRIORITY, &task_new_topic_register);
-  xTaskCreate(task_gprs_connection, "task_gprs", 65536, NULL, configMAX_PRIORITIES, &task3Handle);
+  xTaskCreate(task_new_topic_register, "TaskComm", 2048, NULL, tskIDLE_PRIORITY, &new_topic_register_task);
+  xTaskCreate(task_gprs_connection, "task_gprs", 65536, NULL, configMAX_PRIORITIES, &gprs_connection_task);
+  xTaskCreate(task_communication_board, "TaskBoard", 65536, NULL, configMAX_PRIORITIES - 1, &communication_board_task);
+
 }
 
 void loop()

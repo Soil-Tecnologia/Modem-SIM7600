@@ -2,6 +2,6 @@
 #include "freertos/task.h"
 #include "freertos/queue.h"
 
-extern TaskHandle_t task_new_topic_register;
-extern TaskHandle_t task2Handle;
-extern TaskHandle_t task3Handle;
+extern TaskHandle_t new_topic_register_task;
+extern TaskHandle_t gprs_connection_task;
+extern TaskHandle_t communication_board_task;

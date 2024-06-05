@@ -43,6 +43,11 @@ void task_gprs_connection(void *arg)
                     Serial.println(isConnected ? "CONNECT" : "NO CONNECT");
                     if (isConnected)
                     {
+                        #if TINY_GSM_MODEM_SIM7000
+                            Serial.println("[NETWORK] Prefered modem selection: NB-iot and CAT-M");
+                            modem.setPreferredMode(3);
+                        #endif
+                        
                         Serial.println("\n---Starting GPRS TEST---\n");
                         Serial.println("Connecting to: " + String(APN));
                         if (!modem.gprsConnect(APN, USER, PASS))
@@ -83,6 +88,7 @@ void task_gprs_connection(void *arg)
 
         if (modem.isGprsConnected() && modem.isNetworkConnected())
         {
+            xTaskNotifyGive(communication_board_task);
             task_mqtt_connection();
         }
         vTaskDelay(pdMS_TO_TICKS(100));

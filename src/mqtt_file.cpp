@@ -100,7 +100,6 @@ void task_mqtt_connection()
     }
   }
 
-  publish_board_to_cloud_idp();
   mqtt.loop();
 }
 
