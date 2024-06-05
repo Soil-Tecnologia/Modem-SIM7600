@@ -199,7 +199,6 @@ void publish_board_to_cloud_idp()
                     break;
                 case IDP_13:
                     mqtt.publish(MQTT_TOPIC_SCHEDULING, payload.c_str(), payload.length());
-                    delay(100);
                     break;
                 case IDP_14:
                     mqtt.publish(MQTT_TOPIC_SCHEDULING, payload.c_str(), payload.length());
@@ -215,7 +214,6 @@ void publish_board_to_cloud_idp()
                     break;
                 case IDP_18:
                     mqtt.publish(MQTT_TOPIC_SCHEDULING, payload.c_str(), payload.length());
-                    delay(100);
                     break;
                 case IDP_22:
                     mqtt.publish("cloudv2-config", payload.c_str(), payload.length());

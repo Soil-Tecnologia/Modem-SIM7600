@@ -64,54 +64,44 @@ bool mqtt_is_connect()
   return mqtt.connected();
 }
 
-void task_mqtt_connection(void *arg)
+void task_mqtt_connection()
 {
-  TaskHandle_t nextTask;
-  xQueueReceive(taskQueue, &nextTask, portMAX_DELAY);
-  vTaskDelay(pdMS_TO_TICKS(3000));
-
-  while (true)
+  if (!mqtt.connected())
   {
-    if (!mqtt.connected())
+    if (mqtt_is_connect())
     {
-      if (mqtt_is_connect())
-      {
-        Serial.println("[MQTT] CONNECTED");
-        vTaskResume(task3Handle);
-        vTaskDelete(task1Handle);
-        vTaskDelay(pdMS_TO_TICKS(1000));
-      }
-      else
-      {
-        Serial.println("[MQTT] FAIL");
-        aws_connect_attempts++;
-        Serial.print("[MQTT] Connection attempts: ");
-        Serial.println(aws_connect_attempts);
-        Serial.println();
-        // restart_modem();
-        // init_gprs_connection();
-        String info = get_modem_info();
-        Serial.println(info);
-        vTaskDelay(pdMS_TO_TICKS(1000));
-
-        if (aws_connect_attempts >= MAX_SSL_CONNECT)
-        {
-          Serial.println("");
-          Serial.println("");
-          Serial.println("--------- [MQTT] - COUNTER MQTT OVERFLOW - Restarting ALL ----------");
-          Serial.println("");
-          Serial.println("");
-          vTaskDelay(pdMS_TO_TICKS(3000));
-          ESP.restart();
-        }
-        vTaskDelay(pdMS_TO_TICKS(100));
-      }
+      Serial.println("[MQTT] CONNECTED");
+      vTaskDelay(pdMS_TO_TICKS(1000));
     }
+    else
+    {
+      Serial.println("[MQTT] FAIL");
+      aws_connect_attempts++;
+      Serial.print("[MQTT] Connection attempts: ");
+      Serial.println(aws_connect_attempts);
+      Serial.println();
+      // restart_modem();
+      // init_gprs_connection();
+      String info = get_modem_info();
+      Serial.println(info);
+      vTaskDelay(pdMS_TO_TICKS(100));
 
-    publish_board_to_cloud_idp();
-    mqtt.loop();
-    vTaskDelay(pdMS_TO_TICKS(500));
+      if (aws_connect_attempts >= MAX_SSL_CONNECT)
+      {
+        Serial.println("");
+        Serial.println("");
+        Serial.println("--------- [MQTT] - COUNTER MQTT OVERFLOW - Restarting ALL ----------");
+        Serial.println("");
+        Serial.println("");
+        vTaskDelay(pdMS_TO_TICKS(3000));
+        ESP.restart();
+      }
+      vTaskDelay(pdMS_TO_TICKS(100));
+    }
   }
+
+  publish_board_to_cloud_idp();
+  mqtt.loop();
 }
 
 void mqtt_message_callback(char *topic, byte *payload, unsigned int len)

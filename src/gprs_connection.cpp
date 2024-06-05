@@ -60,7 +60,7 @@ void task_gprs_connection(void *arg)
                             String info = get_modem_info();
                             Serial.println(info);
                             vTaskDelay(pdMS_TO_TICKS(500));
-                            if(modem.isNetworkConnected())
+                            if (modem.isNetworkConnected())
                             {
                                 break;
                             }
@@ -76,13 +76,16 @@ void task_gprs_connection(void *arg)
                 }
                 if (modem.isGprsConnected() && modem.isNetworkConnected())
                 {
-                    xQueueSend(taskQueue, &task4Handle, portMAX_DELAY);
-                    vTaskSuspend(NULL);
                     break;
                 }
             }
         }
-        vTaskDelay(pdMS_TO_TICKS(500));
+
+        if (modem.isGprsConnected() && modem.isNetworkConnected())
+        {
+            task_mqtt_connection();
+        }
+        vTaskDelay(pdMS_TO_TICKS(100));
     }
     vTaskDelay(pdMS_TO_TICKS(100));
 }

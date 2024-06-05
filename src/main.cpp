@@ -6,12 +6,9 @@
 #include "mqtt_file.h"
 #include "esp_task_wdt.h"
 
-TaskHandle_t task1Handle = NULL;
-TaskHandle_t task2Handle = NULL;
+TaskHandle_t task_new_topic_register = NULL;
 TaskHandle_t task3Handle = NULL;
-TaskHandle_t task4Handle = NULL;
 
-QueueHandle_t taskQueue;
 
 void setup()
 {
@@ -22,8 +19,6 @@ void setup()
   Serial.println("[MODEM] INICIALIZANDO AS SERIAIS");
   vTaskDelay(pdMS_TO_TICKS(500));
 
-  taskQueue = xQueueCreate(5, sizeof(TaskHandle_t));
-
   esp_task_wdt_init(30, true);
 
   flash_file_init();
@@ -33,9 +28,8 @@ void setup()
 
   set_aws_certificates();
 
-  xTaskCreate(task_comm_with_board_while_starting, "TaskComm", 10000, NULL, tskIDLE_PRIORITY, &task1Handle);
-  xTaskCreate(task_gprs_connection, "task_gprs", 10000, NULL, configMAX_PRIORITIES - 1, &task3Handle);
-  xTaskCreate(task_mqtt_connection, "task_mqtt", 10000, NULL, configMAX_PRIORITIES, &task4Handle);
+  xTaskCreate(task_comm_with_board_while_starting, "TaskComm", 2048, NULL, tskIDLE_PRIORITY, &task_new_topic_register);
+  xTaskCreate(task_gprs_connection, "task_gprs", 65536, NULL, configMAX_PRIORITIES, &task3Handle);
 }
 
 void loop()

@@ -28,7 +28,7 @@ void restart_modem()
 {
     Serial.println("[MODEM] Restarting...");
     Serial1.println("AT+CFUN=1,1");
-    vTaskDelay(pdMS_TO_TICKS(3000));
+    vTaskDelay(pdMS_TO_TICKS(1000));
     digitalWrite(PWR_PIN, LOW);
     vTaskDelay(pdMS_TO_TICKS(1000));
     modem.restart();
@@ -87,7 +87,7 @@ String get_modem_info()
 {
     String cpsi;
     Serial1.println("AT+CPSI?");
-    delay(500);
+    vTaskDelay(pdMS_TO_TICKS(500));
     if (Serial1.available())
     {
         cpsi = Serial1.readString();
@@ -97,7 +97,7 @@ String get_modem_info()
 
     String csq;
     Serial1.println("AT+CSQ");
-    delay(500);
+    vTaskDelay(pdMS_TO_TICKS(500));
     if (Serial1.available())
     {
         csq = Serial1.readString();
@@ -117,7 +117,7 @@ String get_public_rssi()
 {
     String csq;
     Serial1.println("AT+CSQ");
-    delay(500);
+    vTaskDelay(pdMS_TO_TICKS(500));
     if (Serial1.available())
     {
         csq = Serial1.readString();
@@ -128,7 +128,7 @@ String get_public_rssi()
 
     String pivo_id = flash_file_read("/pivo_id.txt");
 
-    String info_rssi = "#08-" + pivo_id + "-" + rssi_negative + "$";
+    String info_rssi = "#08-" + pivo_id + rssi_negative + "$";
 
     return info_rssi;
 }
