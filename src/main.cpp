@@ -35,7 +35,6 @@ void setup()
 
   xTaskCreate(task_comm_with_board_while_starting, "TaskComm", 10000, NULL, tskIDLE_PRIORITY, &task1Handle);
   xTaskCreate(task_gprs_connection, "task_gprs", 10000, NULL, configMAX_PRIORITIES - 1, &task3Handle);
-  vTaskDelay(pdMS_TO_TICKS(10000));
   xTaskCreate(task_mqtt_connection, "task_mqtt", 10000, NULL, configMAX_PRIORITIES, &task4Handle);
 }
 

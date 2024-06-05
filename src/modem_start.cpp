@@ -30,9 +30,9 @@ void restart_modem()
     Serial1.println("AT+CFUN=1,1");
     vTaskDelay(pdMS_TO_TICKS(3000));
     digitalWrite(PWR_PIN, LOW);
-    vTaskDelay(pdMS_TO_TICKS(3000));
+    vTaskDelay(pdMS_TO_TICKS(1000));
     modem.restart();
-    vTaskDelay(pdMS_TO_TICKS(3000));
+    vTaskDelay(pdMS_TO_TICKS(1000));
     digitalWrite(PWR_PIN, HIGH);
     vTaskDelay(pdMS_TO_TICKS(1000));
 }

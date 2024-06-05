@@ -69,6 +69,7 @@ void task_mqtt_connection(void *arg)
   TaskHandle_t nextTask;
   xQueueReceive(taskQueue, &nextTask, portMAX_DELAY);
   vTaskDelay(pdMS_TO_TICKS(3000));
+
   while (true)
   {
     if (!mqtt.connected())
@@ -106,9 +107,10 @@ void task_mqtt_connection(void *arg)
         vTaskDelay(pdMS_TO_TICKS(100));
       }
     }
-    mqtt.loop();
+
     publish_board_to_cloud_idp();
-    vTaskDelay(pdMS_TO_TICKS(2000));
+    mqtt.loop();
+    vTaskDelay(pdMS_TO_TICKS(500));
   }
 }
 

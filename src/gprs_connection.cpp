@@ -77,12 +77,12 @@ void task_gprs_connection(void *arg)
                 if (modem.isGprsConnected() && modem.isNetworkConnected())
                 {
                     xQueueSend(taskQueue, &task4Handle, portMAX_DELAY);
-                    vTaskSuspend(task3Handle);
+                    vTaskSuspend(NULL);
                     break;
                 }
             }
         }
-        vTaskDelay(pdMS_TO_TICKS(3000));
+        vTaskDelay(pdMS_TO_TICKS(500));
     }
     vTaskDelay(pdMS_TO_TICKS(100));
 }
