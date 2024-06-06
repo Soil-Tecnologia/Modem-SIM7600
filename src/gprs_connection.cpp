@@ -51,6 +51,7 @@ void task_gprs_connection(void *arg)
                     esp_task_wdt_reset();
                     Serial.printf("Try %d method\n", network[i]);
                     modem.setNetworkMode(network[i]);
+                    Serial.println();
                     Serial.print("is Network Connected: ");
                     isConnected = modem.isNetworkConnected();
                     Serial.println(isConnected ? "CONNECT" : "NO CONNECT");
@@ -95,6 +96,14 @@ void task_gprs_connection(void *arg)
                             Serial.println("not connected");
                             Serial.println();
                             vTaskDelay(pdMS_TO_TICKS(1000));
+                        }
+                    }
+                    else
+                    {
+                        cont++;
+                        if(cont >= 100)
+                        {
+                            ESP.restart();
                         }
                     }
                     vTaskDelay(pdMS_TO_TICKS(1000));
