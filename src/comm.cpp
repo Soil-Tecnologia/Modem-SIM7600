@@ -127,7 +127,6 @@ void handle_cloud_to_board_idp(char *message)
             Serial2.print(message);
             break;
         case IDP_90:
-            mqtt.publish(MQTT_TOPIC_NETWORK, VERSION_FIRMWARE);
             Serial2.println("#90$");
             break;
         case IDP_92:

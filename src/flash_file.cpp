@@ -54,18 +54,18 @@ void flash_file_write(const char *path, const char *message)
 
   if (!file)
   {
-    SerialMon.println("[FLASH] failed to save or nothing saved");
+    Serial.println("[FLASH] failed to save or nothing saved");
     return;
   }
   else
   {
     if (file.print(message))
     {
-      SerialMon.println("[FLASH] Saved");
+      Serial.println("[FLASH] Saved");
     }
     else
     {
-      SerialMon.println("[FLASH] Not Saved");
+      Serial.println("[FLASH] Not Saved");
     }
     file.close();
   }

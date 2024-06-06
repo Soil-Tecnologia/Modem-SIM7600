@@ -12,7 +12,7 @@
 #define MQTT_TOPIC_SCHEDULING       "cloudv2-scheduling"
 #define MQTT_TOPIC_NETWORK          "cloudv2-network"
 #define MQTT_TOPIC_ERROR            "cloudv2-error"
-#define VERSION_FIRMWARE            "-master-SIM7600-v2.0$"
+#define VERSION_FIRMWARE            "-main-SIM7600-v2.0$"
 
 extern SSLClientParameters mTLS;
 extern SSLClient clientSSL;
