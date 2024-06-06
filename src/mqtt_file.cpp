@@ -162,11 +162,11 @@ void register_new_topic(String data_received_board)
     strcpy(subc, subs.c_str());
 
     String new_topic = "#06-" + new_id + "new_id$";
-    mqtt.publish(MQTT_TOPIC_NETWORK, new_topic.c_str(), new_topic.length());
+    mqtt.publish(MQTT_TOPIC_NETWORK, id.c_str(), sizeof(id));
 
     Serial.print("[BOARD] New Topic: ");
     Serial.println(subc);
-    mqtt.subscribe(subc, qos_1);
+    mqtt.subscribe(id.c_str(), qos_1);
 
     Serial.print("[MODEM] APN: ");
     Serial.println(apn.c_str());

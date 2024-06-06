@@ -52,9 +52,8 @@ void task_gprs_connection(void *arg)
                 {
                     esp_task_wdt_reset();
                     Serial.printf("Try %d method\n", network[i]);
-                    Serial.println();
                     modem.setNetworkMode(network[i]);
-                    Serial.print("\nis Network Connected: ");
+                    Serial.print("is Network Connected: ");
                     isConnected = modem.isNetworkConnected();
                     Serial.println(isConnected ? "CONNECT" : "NO CONNECT");
                     if (isConnected)

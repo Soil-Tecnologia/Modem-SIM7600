@@ -29,9 +29,9 @@ void setup()
 
   set_aws_certificates();
 
-  xTaskCreate(task_new_topic_register, "TaskComm", 2048, NULL, tskIDLE_PRIORITY, &new_topic_register_task);
-  xTaskCreate(task_gprs_connection, "task_gprs", 65536, NULL, configMAX_PRIORITIES, &gprs_connection_task);
-  xTaskCreate(task_communication_board, "TaskBoard", 65536, NULL, configMAX_PRIORITIES - 1, &communication_board_task);
+  xTaskCreate(task_new_topic_register, "TaskComm", 16384, NULL, tskIDLE_PRIORITY, &new_topic_register_task);
+  xTaskCreate(task_gprs_connection, "task_gprs", 100000, NULL, configMAX_PRIORITIES, &gprs_connection_task);
+  xTaskCreate(task_communication_board, "TaskBoard", 100000, NULL, configMAX_PRIORITIES - 1, &communication_board_task);
 
 }
 

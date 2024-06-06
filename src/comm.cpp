@@ -260,5 +260,6 @@ void task_communication_board(void *arg)
                 }
             }
         }
+        vTaskDelay(pdMS_TO_TICKS(500));
     }
 }

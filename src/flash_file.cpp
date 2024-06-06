@@ -40,7 +40,7 @@ String flash_file_read(const char *path)
   while (file.available())
   {
     size_t bytesRead = file.readBytes(buffer, bufferSize);
-    fileContent += String(buffer, bytesRead);
+    fileContent += String(buffer);
   }
 
   file.close();
@@ -51,16 +51,22 @@ String flash_file_read(const char *path)
 void flash_file_write(const char *path, const char *message)
 {
   File file = SPIFFS.open(path, "w");
-  int wifi_written = 0;
 
   if (!file)
   {
-    Serial.println("[FLASH] failed to open file for writing");
+    SerialMon.println("[FLASH] failed to save or nothing saved");
+    return;
   }
   else
   {
-    Serial.println("[FLASH] File written");
+    if (file.print(message))
+    {
+      SerialMon.println("[FLASH] Saved");
+    }
+    else
+    {
+      SerialMon.println("[FLASH] Not Saved");
+    }
+    file.close();
   }
-
-  file.close();
 }
