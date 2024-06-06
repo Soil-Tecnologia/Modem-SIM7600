@@ -45,6 +45,8 @@ enum IDP
 	IDP_18,
     IDP_20 = 20,
 	IDP_22 = 22,
+    IDP_23 = 23,
+    IDP_24 = 24,
 	IDP_30 = 30,
 	IDP_90 = 90,
 	IDP_91,

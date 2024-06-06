@@ -21,7 +21,7 @@ void start_modem()
     vTaskDelay(pdMS_TO_TICKS(500));
     digitalWrite(PWR_PIN, HIGH);
     modem.begin();
-    vTaskDelay(pdMS_TO_TICKS(3000));
+    vTaskDelay(pdMS_TO_TICKS(5000));
 }
 
 void restart_modem()

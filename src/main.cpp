@@ -20,7 +20,7 @@ void setup()
   Serial.println("[MODEM] INICIALIZANDO AS SERIAIS");
   vTaskDelay(pdMS_TO_TICKS(500));
 
-  esp_task_wdt_init(30, true);
+  esp_task_wdt_init(180, true);
 
   flash_file_init();
 

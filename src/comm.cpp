@@ -83,6 +83,9 @@ void handle_cloud_to_board_idp(char *message)
         case IDP_5:
             Serial2.print(message);
             break;
+        case IDP_7:
+            Serial2.print(message);
+            break;
         case IDP_8:
             modem_rssi = get_public_rssi();
             Serial.print("[MODEM] RSSI: ");
@@ -115,6 +118,12 @@ void handle_cloud_to_board_idp(char *message)
             // mqtt.publish(MQTT_TOPIC_NETWORK, ack_received.c_str(), ack_received.length());
             break;
         case IDP_22:
+            Serial2.print(message);
+            break;
+        case IDP_23:
+            Serial2.print(message);
+            break;
+        case IDP_24:
             Serial2.print(message);
             break;
         case IDP_90:
@@ -195,6 +204,9 @@ void task_communication_board(void *arg)
                     case IDP_6:
                         register_new_topic(payload);
                         break;
+                    case IDP_7:
+                        mqtt.publish("cloudv2-config", payload.c_str(), payload.length());
+                        break;
                     case IDP_11:
                         Serial2.print("#06$");
                         break;
@@ -220,6 +232,12 @@ void task_communication_board(void *arg)
                         mqtt.publish(MQTT_TOPIC_SCHEDULING, payload.c_str(), payload.length());
                         break;
                     case IDP_22:
+                        mqtt.publish("cloudv2-config", payload.c_str(), payload.length());
+                        break;
+                    case IDP_23:
+                        mqtt.publish("cloudv2-config", payload.c_str(), payload.length());
+                        break;
+                    case IDP_24:
                         mqtt.publish("cloudv2-config", payload.c_str(), payload.length());
                         break;
                     case IDP_30:

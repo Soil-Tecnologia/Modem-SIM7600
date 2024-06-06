@@ -1,7 +1,7 @@
 #define SERIAL_TX       3
 #define SERIAL_RX       1
-#define SERIAL1_TX      18
-#define SERIAL1_RX      19
+#define SERIAL1_TX      19
+#define SERIAL1_RX      18
 #define SERIAL2_TX      26
 #define SERIAL2_RX      27
 

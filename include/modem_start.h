@@ -1,5 +1,5 @@
 
-#define TINY_GSM_MODEM_SIM7600 false
+// #define TINY_GSM_MODEM_SIM7600 true
 #define TINY_GSM_MODEM_SIM7000 true
 
 #include "TinyGSM.h"
