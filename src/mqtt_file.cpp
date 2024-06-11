@@ -25,8 +25,14 @@ uint8_t aws_connect_attempts = 0;
 
 void set_aws_certificates()
 {
+  mqtt.setSocketTimeout(30); 
+  mqtt.setKeepAlive(60);
+  mqtt.setBufferSize(512);
+  
+  vTaskDelay(500);
   Serial.println("[MQTT] Sending certificates");
   clientSSL.setMutualAuthParams(mTLS);
+
 }
 
 bool mqtt_is_connect()
@@ -40,7 +46,9 @@ bool mqtt_is_connect()
   vTaskDelay(pdMS_TO_TICKS(100));
   char ID[15];
   snprintf(ID, sizeof(ID), "%lu", chip_id);
-  bool status = mqtt.connect(ID);
+
+  String subc = flash_file_read("/pivo_id.txt");
+  bool status = mqtt.connect(ID, NULL, NULL, "cloudv2-reconnection", 1, true, "CAIU A CONEXAO - TESTANDO MENSAGEM DE LWT");
 
   if (!status)
   {
@@ -51,7 +59,6 @@ bool mqtt_is_connect()
   Serial.println("[MQTT] MQTT Config OK");
   Serial.println("");
 
-  String subc = flash_file_read("/pivo_id.txt");
   mqtt.subscribe(subc.c_str());
   String modem_online = get_modem_info();
 

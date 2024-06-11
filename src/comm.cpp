@@ -147,118 +147,113 @@ void handle_cloud_to_board_idp(char *message)
     }
 }
 
-void task_communication_board(void *arg)
+void task_communication_board()
 {
-    while (true)
+    if (Serial2.available())
     {
-        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+        String received_board = Serial2.readString().c_str();
 
-        if (Serial2.available())
+        Serial.print("[BOARD] ");
+        Serial.println(received_board.c_str());
+
+        uint8_t number;
+        uint8_t startIndex = 0;
+
+        uint8_t hashIndex = received_board.indexOf('#', startIndex);
+        uint8_t dollarIndex = received_board.indexOf('$', hashIndex);
+
+        String gprs_id = flash_file_read("/pivo_id.txt");
+
+        if (hashIndex != -1 && dollarIndex != -1)
         {
-            String received_board = Serial2.readString().c_str();
+            String payload = received_board.substring(hashIndex, dollarIndex + 1);
 
-            Serial.print("[BOARD] ");
-            Serial.println(received_board.c_str());
+            char *hashtag_position = strchr(payload.c_str(), '#');
 
-            uint8_t number;
-            uint8_t startIndex = 0;
-
-            uint8_t hashIndex = received_board.indexOf('#', startIndex);
-            uint8_t dollarIndex = received_board.indexOf('$', hashIndex);
-
-            String gprs_id = flash_file_read("/pivo_id.txt");
-
-            if (hashIndex != -1 && dollarIndex != -1)
+            if (hashtag_position != NULL)
             {
-                String payload = received_board.substring(hashIndex, dollarIndex + 1);
+                String numberStr = payload.substring(1, 3);
 
-                char *hashtag_position = strchr(payload.c_str(), '#');
+                number = numberStr.toInt();
 
-                if (hashtag_position != NULL)
+                switch (number)
                 {
-                    String numberStr = payload.substring(1, 3);
-
-                    number = numberStr.toInt();
-
-                    switch (number)
-                    {
-                    case IDP_0:
-                        mqtt.publish(MQTT_TOPIC_PAYLOAD, payload.c_str(), payload.length());
-                        break;
-                    case IDP_1:
-                        mqtt.publish(MQTT_TOPIC_PAYLOAD, payload.c_str(), payload.length());
-                        break;
-                    case IDP_2:
-                        mqtt.publish("cloudv2-config", payload.c_str(), payload.length());
-                        break;
-                    case IDP_3:
-                        mqtt.publish("cloudv2-config", payload.c_str(), payload.length());
-                        break;
-                    case IDP_4:
-                        mqtt.publish("cloudv2-config", payload.c_str(), payload.length());
-                        break;
-                    case IDP_5:
-                        mqtt.publish("cloudv2-config", payload.c_str(), payload.length());
-                        break;
-                    case IDP_6:
-                        register_new_topic(payload);
-                        break;
-                    case IDP_7:
-                        mqtt.publish("cloudv2-config", payload.c_str(), payload.length());
-                        break;
-                    case IDP_11:
-                        Serial2.print("#06$");
-                        break;
-                    case IDP_12:
-                        mqtt.publish(MQTT_TOPIC_PAYLOAD, payload.c_str(), payload.length());
-                        break;
-                    case IDP_13:
-                        mqtt.publish(MQTT_TOPIC_SCHEDULING, payload.c_str(), payload.length());
-                        break;
-                    case IDP_14:
-                        mqtt.publish(MQTT_TOPIC_SCHEDULING, payload.c_str(), payload.length());
-                        break;
-                    case IDP_15:
-                        mqtt.publish(MQTT_TOPIC_SCHEDULING, payload.c_str(), payload.length());
-                        break;
-                    case IDP_16:
-                        mqtt.publish(MQTT_TOPIC_SCHEDULING, payload.c_str(), payload.length());
-                        break;
-                    case IDP_17:
-                        mqtt.publish(MQTT_TOPIC_SCHEDULING, payload.c_str(), payload.length());
-                        break;
-                    case IDP_18:
-                        mqtt.publish(MQTT_TOPIC_SCHEDULING, payload.c_str(), payload.length());
-                        break;
-                    case IDP_22:
-                        mqtt.publish("cloudv2-config", payload.c_str(), payload.length());
-                        break;
-                    case IDP_23:
-                        mqtt.publish("cloudv2-config", payload.c_str(), payload.length());
-                        break;
-                    case IDP_24:
-                        mqtt.publish("cloudv2-config", payload.c_str(), payload.length());
-                        break;
-                    case IDP_30:
-                        mqtt.publish(MQTT_TOPIC_PAYLOAD, payload.c_str(), payload.length());
-                        break;
-                    case IDP_90:
-                        payload.remove(payload.length() - 1);
-                        payload = payload + VERSION_FIRMWARE;
-                        mqtt.publish(MQTT_TOPIC_NETWORK, payload.c_str(), payload.length());
-                        break;
-                    case IDP_99:
-                        mqtt.publish(MQTT_TOPIC_ERROR, payload.c_str(), payload.c_str());
-                        break;
-                    default:
-                        String invalid_idp = "#255-Invalid_idp-" + gprs_id + "$";
-                        Serial.println(invalid_idp);
-                        mqtt.publish(MQTT_TOPIC_NETWORK, invalid_idp.c_str(), invalid_idp.length());
-                        break;
-                    }
+                case IDP_0:
+                    mqtt.publish(MQTT_TOPIC_PAYLOAD, payload.c_str(), true);
+                    break;
+                case IDP_1:
+                    mqtt.publish(MQTT_TOPIC_PAYLOAD, payload.c_str(), payload.length());
+                    break;
+                case IDP_2:
+                    mqtt.publish(MQTT_TOPIC_CONFIG, payload.c_str(), payload.length());
+                    break;
+                case IDP_3:
+                    mqtt.publish(MQTT_TOPIC_CONFIG, payload.c_str(), payload.length());
+                    break;
+                case IDP_4:
+                    mqtt.publish(MQTT_TOPIC_CONFIG, payload.c_str(), payload.length());
+                    break;
+                case IDP_5:
+                    mqtt.publish(MQTT_TOPIC_CONFIG, payload.c_str(), payload.length());
+                    break;
+                case IDP_6:
+                    register_new_topic(payload);
+                    break;
+                case IDP_7:
+                    mqtt.publish(MQTT_TOPIC_CONFIG, payload.c_str(), payload.length());
+                    break;
+                case IDP_11:
+                    Serial2.print("#06$");
+                    break;
+                case IDP_12:
+                    mqtt.publish(MQTT_TOPIC_PAYLOAD, payload.c_str(), payload.length());
+                    break;
+                case IDP_13:
+                    mqtt.publish(MQTT_TOPIC_SCHEDULING, payload.c_str(), payload.length());
+                    break;
+                case IDP_14:
+                    mqtt.publish(MQTT_TOPIC_SCHEDULING, payload.c_str(), payload.length());
+                    break;
+                case IDP_15:
+                    mqtt.publish(MQTT_TOPIC_SCHEDULING, payload.c_str(), payload.length());
+                    break;
+                case IDP_16:
+                    mqtt.publish(MQTT_TOPIC_SCHEDULING, payload.c_str(), payload.length());
+                    break;
+                case IDP_17:
+                    mqtt.publish(MQTT_TOPIC_SCHEDULING, payload.c_str(), payload.length());
+                    break;
+                case IDP_18:
+                    mqtt.publish(MQTT_TOPIC_SCHEDULING, payload.c_str(), payload.length());
+                    break;
+                case IDP_22:
+                    mqtt.publish(MQTT_TOPIC_CONFIG, payload.c_str(), payload.length());
+                    break;
+                case IDP_23:
+                    mqtt.publish(MQTT_TOPIC_CONFIG, payload.c_str(), payload.length());
+                    break;
+                case IDP_24:
+                    mqtt.publish(MQTT_TOPIC_CONFIG, payload.c_str(), payload.length());
+                    break;
+                case IDP_30:
+                    mqtt.publish(MQTT_TOPIC_PAYLOAD, payload.c_str(), true);
+                    break;
+                case IDP_90:
+                    payload.remove(payload.length() - 1);
+                    payload = payload + VERSION_FIRMWARE;
+                    mqtt.publish(MQTT_TOPIC_NETWORK, payload.c_str(), payload.length());
+                    break;
+                case IDP_99:
+                    mqtt.publish(MQTT_TOPIC_ERROR, payload.c_str(), payload.c_str());
+                    break;
+                default:
+                    String invalid_idp = "#255-Invalid_idp-" + gprs_id + "$";
+                    Serial.println(invalid_idp);
+                    mqtt.publish(MQTT_TOPIC_NETWORK, invalid_idp.c_str(), invalid_idp.length());
+                    break;
                 }
             }
         }
-        vTaskDelay(pdMS_TO_TICKS(500));
     }
+    vTaskDelay(pdMS_TO_TICKS(500));
 }

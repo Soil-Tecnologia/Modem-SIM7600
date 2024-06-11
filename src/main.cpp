@@ -28,42 +28,24 @@ void setup()
 
   set_aws_certificates();
 
-  BaseType_t task_board = xTaskCreate(task_communication_board, "TaskBoard", 80000, NULL, configMAX_PRIORITIES - 1, &communication_board_task);
-
-  if (task_board != pdPASS)
-  {
-    Serial.println("Failed to create task board");
-  }
-  else
-  {
-    Serial.println("Task created successfully");
-  }
-
   BaseType_t task_topic = xTaskCreate(task_new_topic_register, "TaskComm", 16384, NULL, tskIDLE_PRIORITY, &new_topic_register_task);
- 
+
   if (task_topic != pdPASS)
   {
     Serial.println("Failed to create task new topic");
+    ESP.restart();
   }
   else
   {
     Serial.println("Task created successfully");
   }
- 
-  BaseType_t task_gprs =  xTaskCreate(task_gprs_connection, "task_gprs", 100000, NULL, configMAX_PRIORITIES, &gprs_connection_task);
-
-  if (task_gprs != pdPASS)
-  {
-    Serial.println("Failed to create task gprs connection");
-  }
-  else
-  {
-    Serial.println("Task created successfully");
-  }
-
 }
 
 void loop()
 {
-  vTaskDelay(pdMS_TO_TICKS(100));
+  task_gprs_connection();
+  task_communication_board();
+  task_mqtt_connection();
+  
+  vTaskDelay(pdMS_TO_TICKS(500));
 }
